@@ -22,3 +22,6 @@ db = SQLAlchemy(app)
 
 from project.server.auth.view import auth_blueprint
 app.register_blueprint(auth_blueprint, url_prefix='/tiny')
+
+from project.server.auth.start import auth_blueprint
+app.register_blueprint(auth_blueprint, url_prefix='/')

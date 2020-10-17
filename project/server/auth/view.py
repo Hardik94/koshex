@@ -7,7 +7,7 @@ from project.server.models import Urls, Metadata, db
 from project.server.errors import RootException, AuthException
 from project.server import url_shortner
 import os
-auth_blueprint = Blueprint('auth', __name__)
+auth_blueprint = Blueprint('App', __name__)
 
 
 
