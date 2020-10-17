@@ -52,6 +52,11 @@ $ curl --location --request GET 'https://koshex.herokuapp.com//tiny/search?key=p
 
 3. For Fetching metadata of stored url - pass shorten base_path of url to route.
 ```
-$ curl --location --request GET 'https://koshex.herokuapp.com/tiny/y2agkcpj'
+$ curl --location --request GET 'https://koshex.herokuapp.com/tiny/agkcpj'
+```
+
+4. For Redirecting from short url
+```
+$ curl --location --request GET 'https://koshex.herokuapp.com/agkcpj'
 ```
 
