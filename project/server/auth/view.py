@@ -57,6 +57,12 @@ class SearchAPI(MethodView):
     def get(self):
         try:
             param_data = request.args.to_dict()
+            if 'key' not in param_data:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'No Sufficient Parameter passed. Please assign your search word in key attribute for GET Request.'
+                }
+                return make_response(jsonify(responseObject)), 201
             result = Urls.query.filter(Urls.origional.ilike("%"+param_data['key']+"%")).all()
             if result:
                 data = []

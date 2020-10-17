@@ -33,69 +33,13 @@ COV = coverage.coverage(
 )
 COV.start()
 
-def number_of_workers():
-    return (multiprocessing.cpu_count() * 2) + 1
-
-class GunicornServer(Command):
-
-    description = 'Run the app within Gunicorn'
-
-    def __init__(self, host='0.0.0.0', port=5000, workers=number_of_workers()):
-    # def __init__(self, host='0.0.0.0', port=8000, workers=4):
-        self.port = port
-        self.host = host
-        self.workers = workers
-
-    def get_options(self):
-        return (
-            Option('-H', '--host',
-                    dest='host',
-                    default=self.host),
-
-            Option('-p', '--port',
-                    dest='port',
-                    type=int,
-                    default=self.port),
-
-            Option('-w', '--workers',
-                    dest='workers',
-                    type=int,
-                    default=self.workers),
-        )
-
-    def __call__(self, app, host, port, workers):
-
-        from gunicorn import version_info
-
-        if version_info < (0, 9, 0):
-            from gunicorn.arbiter import Arbiter
-            from gunicorn.config import Config
-            arbiter = Arbiter(Config({'bind': "%s:%d" % (host, int(port)),'workers': workers}), app)
-            arbiter.run()
-        else:
-            from gunicorn.app.base import Application
-
-            class FlaskApplication(Application):
-                def init(self, parser, opts, args):
-                    return {
-                        'bind': '{0}:{1}'.format(host, port),
-                        'workers': workers
-                    }
-
-                def load(self):
-                    return app
-
-            FlaskApplication().run()
-
 from project.server import app, db, models
-# from project.server import app, models
 
 migrate = Migrate(app, db)
 manager = Manager(app)
 
 # migrations
 manager.add_command('db', MigrateCommand)
-manager.add_command('gunicorn', GunicornServer)
 
 
 @manager.command
