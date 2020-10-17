@@ -28,6 +28,30 @@ $ python3 manage.py db migrate
 
 ### 4. Run Application
 ```
-$ python3 manage.py gunicorn
+$ gunicorn manage:app
+```
+
+## Demo Application
+For testing Demo Application is live on [Heroku](https://koshex.herokuapp.com)
+
+
+## Sample Requests
+1. For creating tiny url
+```
+$ curl --location --request POST 'https://koshex.herokuapp.com/tiny/create' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "url": "https://www.google.com/search?channel=fs&client=ubuntu&q=access+inherited+class+value+in+python"
+}'
+```
+
+2. For searching keywords 'python' in already shortened url/
+```
+$ curl --location --request GET 'https://koshex.herokuapp.com//tiny/search?key=python'
+```
+
+3. For Fetching metadata of stored url - pass shorten base_path of url to route.
+```
+$ curl --location --request GET 'https://koshex.herokuapp.com/tiny/y2agkcpj'
 ```
 

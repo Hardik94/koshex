@@ -91,22 +91,34 @@ class SearchAPI(MethodView):
 class DetailAPI(MethodView):
     def get(self, **kwargs):
         try:
+            keyword = ""
+            if 'tinyurl' in kwargs['shorten']:
+                keyword = os.path.basename(kwargs['shorten'])
+            else:
+                keyword = kwargs['shorten']
 
-            total_count = Metadata.query.join(Urls, Metadata.url_id==Urls.id).filter(Urls.shorten==kwargs['shorten']).count()
+            if keyword:
+                total_count = Metadata.query.join(Urls, Metadata.url_id==Urls.id).filter(Urls.shorten==keyword).count()
 
-            sql = text("select date_part('hour', metadata.created_at) AS hour, count(metadata.id) as total from metadata inner join urls on urls.id=metadata.url_id where shorten='{shorten}' group by date_part('hour', metadata.created_at) order by date_part('hour', metadata.created_at) desc limit 10;".format(**kwargs))
-            result = db.engine.execute(sql)
-            hourly = [{'Hour': row[0], "Hits": row[1]} for row in result]
+                sql = text("select date_part('hour', metadata.created_at) AS hour, count(metadata.id) as total from metadata inner join urls on urls.id=metadata.url_id where shorten='{shorten}' group by date_part('hour', metadata.created_at) order by date_part('hour', metadata.created_at) desc limit 10;".format(**{'shorten':keyword}))
+                result = db.engine.execute(sql)
+                hourly = [{'Hour': row[0], "Hits": row[1]} for row in result]
 
-            responseObject = {
-                'status': 'success',
-                'message': 'Requested data Found.',
-                "data": {
-                    'total_hits': total_count,
-                    'Hourly_hits': hourly
+                responseObject = {
+                    'status': 'success',
+                    'message': 'Requested data Found.',
+                    "data": {
+                        'total_hits': total_count,
+                        'Hourly_hits': hourly
+                    }
                 }
-            }
-            return make_response(jsonify(responseObject)), 201
+                return make_response(jsonify(responseObject)), 201
+            else:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'Please add valid url.'
+                }
+                return make_response(jsonify(responseObject)), 201
         except Exception as e:
             print(e)
             responseObject = {
