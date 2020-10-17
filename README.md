@@ -21,8 +21,8 @@ $ sudo pip3 install -r requirements.txt
 
 ### 3. Create Predefined tables for Application
 ```
-$ python3 manage.py db init
 $ python3 manage.py create_db
+$ python3 manage.py db init
 $ python3 manage.py db migrate
 ```
 

@@ -1,19 +1,13 @@
-#Importing the required librarie
-from __future__ import with_statement
-import contextlib
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
-try:
-    from urllib.request import urlopen
-except ImportError:
-    from urllib2 import urlopen
-import sys
+import string, random
+import base64
 
+def make_shorten(size=6, chars=string.ascii_uppercase + string.digits + string.ascii_lowercase):
+    return ''.join(random.choice(chars) for _ in range(size))
 
-#Defining the function to shorten a URL
-def make_shorten(url):
-    request_url = ('http://tinyurl.com/api-create.php?' + urlencode({'url':url}))
-    with contextlib.closing(urlopen(request_url)) as response:
-        return response.read().decode('utf-8')
+def custom_shorten(key=''):
+    if len(key) < 7:
+        key = make_shorten(size=50)
+    message_bytes = key.encode('ascii')
+    base64_bytes = base64.b64encode(message_bytes)
+    base64_message = base64_bytes.decode('ascii')
+    return make_shorten(size=6, chars=base64_message)

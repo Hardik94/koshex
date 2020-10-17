@@ -15,7 +15,6 @@ app_settings = os.getenv(
 )
 app.config.from_object(app_settings)
 
-
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 
@@ -25,3 +24,6 @@ app.register_blueprint(auth_blueprint, url_prefix='/tiny')
 
 from project.server.auth.start import auth_blueprint
 app.register_blueprint(auth_blueprint, url_prefix='/')
+
+from project.server.auth.redirect import auth_blueprint
+app.register_blueprint(auth_blueprint, url_prefix='/<shorten>')
